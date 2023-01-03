@@ -8,13 +8,17 @@ def fetch_rooms(HTB_TOKEN,source_url,userId):
         return htb(HTB_TOKEN,source_url,userId)
 
 def thm(source_url,userId):
-    url_thm = source_url+userId+"&limit=50&page=1"
-    page = requests.get(url_thm)
-    json_file = json.loads(page.content)
+    json_file = ""
     rooms = []
-    for room in json_file:
-        if room["type"]=="challenge":
-            rooms.append({"title": room["title"], "url": "https://tryhackme.com/room/"+room["code"], "id": room['code']})
+    offset=1
+    while json_file != []:
+        url_thm = source_url+userId+"&limit=10&page="+str(offset)
+        page = requests.get(url_thm)
+        json_file = json.loads(page.content)
+        for room in json_file:
+            if room["type"]=="challenge":
+                rooms.append({"title": room["title"], "url": "https://tryhackme.com/room/"+room["code"], "id": room['code']})
+        offset+=1
     return rooms
 
 def htb(HTB_TOKEN,source_url,userId):
